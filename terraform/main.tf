@@ -36,6 +36,22 @@ resource "aws_instance" "devops_server" {
 
   vpc_security_group_ids = [aws_security_group.devops_sg.id]
 
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install docker -y
+              service docker start
+
+              docker run -d -p 5000:5000 python:3.11-slim bash -c "pip install flask && python - <<APP
+              from flask import Flask
+              app = Flask(__name__)
+              @app.route('/')
+              def home():
+                  return 'DevOps Assignment - App successfully deployed!'
+              app.run(host='0.0.0.0', port=5000)
+APP"
+              EOF
+
   tags = {
     Name = "DevOpsAssignmentServer"
   }
