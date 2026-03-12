@@ -2,21 +2,19 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# Security Group
 resource "aws_security_group" "devops_sg" {
-  name        = "devops-security-group"
-  description = "Allow SSH and Flask app"
+  name = "devops-security-group"
 
   ingress {
-    description = "SSH access"
+    description = "SSH access (intentional vulnerability)"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]   # Intentional vulnerability
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    description = "Flask app access"
+    description = "Flask App"
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
@@ -31,34 +29,33 @@ resource "aws_security_group" "devops_sg" {
   }
 }
 
-# EC2 Instance
 resource "aws_instance" "devops_server" {
 
-  ami           = "ami-0f5ee92e2d63afc18"
+  ami           = "ami-03f4878755434977f"   # Ubuntu AMI for ap-south-1
   instance_type = "t2.micro"
 
   vpc_security_group_ids = [aws_security_group.devops_sg.id]
 
   user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y python3
+#!/bin/bash
+apt update -y
+apt install -y python3 python3-pip
 
-              pip3 install flask
+pip3 install flask
 
-              cat <<APP > /home/ec2-user/app.py
+cat <<APP > /home/ubuntu/app.py
 from flask import Flask
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def home():
     return "DevOps Assignment - App successfully deployed!"
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host="0.0.0.0", port=5000)
 APP
 
-              python3 /home/ec2-user/app.py &
-              EOF
+python3 /home/ubuntu/app.py &
+EOF
 
   tags = {
     Name = "DevOpsAssignmentServer"
