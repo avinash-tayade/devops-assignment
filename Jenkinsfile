@@ -19,6 +19,24 @@ pipeline {
             }
         }
 
+        stage('Terraform Plan') {
+            steps {
+                sh '''
+                docker run --rm \
+                -v $PWD:/workspace \
+                -w /workspace/terraform \
+                hashicorp/terraform:latest init
+                '''
+
+                sh '''
+                docker run --rm \
+                -v $PWD:/workspace \
+                -w /workspace/terraform \
+                hashicorp/terraform:latest plan
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devops-app .'
