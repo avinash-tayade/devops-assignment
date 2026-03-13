@@ -217,7 +217,7 @@ The `screenshots` folder includes:
 
 A video demonstration of the complete project execution is available here:
 
-https://drive.google.com/drive/folders/1napTF4UEg2G8ycKp31G8mm-rr-sNaCmp
+https://drive.google.com/file/d/1RNrvJOEhYgBe7Bj2p3EryoPzfyxHm4G-/view?usp=drivesdk
 
 The video demonstrates:
 
